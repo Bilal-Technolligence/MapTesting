@@ -45,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
                     email.setFocusable(true);
                 } else {
                     if(EMAIL.equals("admin@gmail.com") && PASSWORD.equals("admin")){
-                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
+                        Intent i = new Intent(getApplicationContext(), addloc.class);
                         i.putExtra("id" , "admin");
                         startActivity(i);
                     }
