@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -39,6 +40,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int REQUEST_CODE = 101;
     FloatingActionButton add;
     String service;
+    DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                ShowDialog();
             }
         });
 //        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -98,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("You are here Stay home Save Lives !");
         //MarkerOptions markerOption = new MarkerOptions().position(latLng).snippet("abc");
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 2500));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 50));
         googleMap.addMarker(markerOptions);
     }
 
@@ -115,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void ShowDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View mView = getLayoutInflater().inflate(R.layout.addlocation, null);
-        final Spinner serviceSpinner = findViewById(R.id.spinnerType);
+        final Spinner serviceSpinner = (Spinner) mView.findViewById(R.id.spinnerType);
 
         serviceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -135,18 +137,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     public void onClick(DialogInterface dialog, int which) {
 
-                        String currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        final String push = FirebaseDatabase.getInstance().getReference().child("Rating").push().getKey();
+                        final String push = FirebaseDatabase.getInstance().getReference().child("Location").push().getKey();
                         Location_Attr attr = new Location_Attr();
                         attr.setId(push);
-                        attr.setName(comment.getText().toString());
+                        attr.setName(comment.getText().toString().toUpperCase());
                         attr.setLongitude(String.valueOf(currentLocation.getLongitude()));
                         attr.setLatitude(String.valueOf(currentLocation.getLatitude()));
                         attr.setType(service);
 
-//                        database.getReference().child("Rating").child(serviceId).child(currentUser)
-//                                .setValue(rating_attr);
-
+                        dref.child("Location").child(comment.getText().toString().toUpperCase())
+                                .setValue(attr);
+                        Toast.makeText(getApplicationContext(), "Location saved.", Toast.LENGTH_LONG).show();
                         dialog.dismiss();
                     }
                 }).setNegativeButton("Cancel",
