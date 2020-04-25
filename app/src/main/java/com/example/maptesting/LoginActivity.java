@@ -15,13 +15,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final int RC_SIGN_IN = 100;
     private Button btnLogin, btnLogin2, btnSignup;
     TextView btnRecoverPass;
     EditText email,password;
-    ProgressDialog progressDialog;
-    private String selection;
-    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +41,7 @@ public class LoginActivity extends AppCompatActivity {
                     email.setFocusable(true);
                 } else {
                     if(EMAIL.equals("admin@gmail.com") && PASSWORD.equals("admin")){
-                        Intent i = new Intent(getApplicationContext(), addloc.class);
-                        i.putExtra("id" , "admin");
+                        Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(i);
                     }
 
