@@ -1,4 +1,18 @@
 <resources>
-    <string name="app_name">MapTesting</string>
+    <string name="app_name">RouteGuide</string>
     <string name="title_activity_maps">Map</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string-array name="selection">
+        <item>Education</item>
+        <item>Hospital</item>
+        <item>Police Station</item>
+        <item>Rescue</item>
+        <item>Fire Brigade</item>
+        <item>Shop</item>
+        <item>Gas Station</item>
+        <item>Hotel</item>
+        <item>Park</item>
+        <item>Bank</item>
+    </string-array>
 </resources>
