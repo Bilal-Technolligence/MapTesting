@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -49,9 +50,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         fetchLocation();
         add = findViewById(R.id.floatButton);
 
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent i = new Intent(MapsActivity.this, LoginActivity.class);
+                startActivity(i);
 
             }
         });

@@ -13,7 +13,7 @@ import com.google.android.gms.maps.model.Polyline;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity {
 
     private GoogleMap mMap;
     private MarkerOptions place1,place2;
@@ -44,8 +44,4 @@ public class MainActivity extends BaseActivity {
         return String.valueOf(0);
     }
 
-    @Override
-    protected int getContentViewId() {
-        return R.layout.activity_main;
-    }
 }

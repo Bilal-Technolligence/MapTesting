@@ -7,10 +7,7 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawarLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <fragment
             android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -26,15 +23,5 @@
             android:text="Get Direction" />
 
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/drawerNavigationView"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="#fff"
-            app:itemTextColor="#6c6c6c"
-            app:menu="@menu/drawar_menu" />
-
-    </androidx.drawerlayout.widget.DrawerLayout>
 
 </LinearLayout>
