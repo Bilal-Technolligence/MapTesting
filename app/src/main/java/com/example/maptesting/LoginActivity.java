@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,7 +26,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         btnLogin = (Button) findViewById(R.id.btnLogin);
         btnLogin2 = (Button) findViewById(R.id.button3);
-        btnRecoverPass = findViewById(R.id.recoverpasswordtv);
         btnSignup = (Button) findViewById(R.id.btnSignup);
        // final String arr[] = getResources().getStringArray(R.array.selection);
         password = (EditText) findViewById(R.id.editText2);
@@ -44,6 +44,8 @@ public class LoginActivity extends AppCompatActivity {
                         Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                         startActivity(i);
                     }
+                    else
+                        Toast.makeText(getApplicationContext(),"Invalid email or password.",Toast.LENGTH_SHORT).show();
 
 
                 }
