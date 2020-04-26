@@ -15,4 +15,5 @@
         <item>Park</item>
         <item>Bank</item>
     </string-array>
+    <string name="title_activity_maps2">Map</string>
 </resources>
