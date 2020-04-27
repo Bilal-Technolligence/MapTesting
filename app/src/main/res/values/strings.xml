@@ -7,12 +7,15 @@
         <item>Education</item>
         <item>Hospital</item>
         <item>Police Station</item>
-        <item>Rescue</item>
-        <item>Fire Brigade</item>
-        <item>Shop</item>
-        <item>Gas Station</item>
+        <item>Food</item>
+        <item>Toilet</item>
+        <item>Atm</item>
+        <item>Bank</item>
+        <item>Parking</item>
+        <item>Fuel</item>
         <item>Hotel</item>
         <item>Park</item>
-        <item>Bank</item>
+        <item>Pharmacy</item>
+        <item>Train</item>
     </string-array>
 </resources>
