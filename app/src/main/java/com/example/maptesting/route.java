@@ -2,9 +2,7 @@ package com.example.maptesting;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,7 +14,6 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,49 +26,33 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.time.LocalDate;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
-public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
-
+public class route extends AppCompatActivity implements OnMapReadyCallback {
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
-    int icon;
     LocationManager locationManager;
     String lati, loni;
+    int icon;
     Double latitude = 0.0, longitude = 0.0;
     FusedLocationProviderClient mFusedLocationClient;
-    TextView textView;
+    String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_places);
+        setContentView(R.layout.activity_route);
+        Intent i = getIntent();
+        id= i.getStringExtra("id");
         SupportMapFragment supportMapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
-        supportMapFragment.getMapAsync(AllPlaces.this);
-        textView = findViewById(R.id.txtView);
-        textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AllPlaces.this,search.class);
-                startActivity(intent);
-            }
-        });
+        supportMapFragment.getMapAsync(route.this);
     }
 
     @Override
@@ -95,7 +76,7 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
                             LatLng latLng1 = new LatLng(latitude, longitude);
                             googleMap.addMarker(new MarkerOptions().position(latLng1).title("Your location"));
                             googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng1));
-                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng1, 50));
+                            googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng1, 20));
                         } else {
 
                             Toast.makeText(getApplicationContext(), "Please allow location to this app", Toast.LENGTH_SHORT).show();
@@ -104,81 +85,57 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
 
                     }
                 });
-
-        dref.child("Location").addValueEventListener(new ValueEventListener() {
+        dref.child("Location").child(id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot ds : dataSnapshot.getChildren()) {
-                    Location_Attr Attr = ds.getValue(Location_Attr.class);
-                    LatLng latLng = new LatLng(Double.valueOf(Attr.getLatitude()), Double.valueOf(Attr.getLongitude()));
-                    String name = Attr.getName();
-                    String type= Attr.getType();
-                    if(type.equals("Food")){
-                        icon = R.drawable.khana;
-                    }
-                    else if(type.equals("Atm")){
-                        icon = R.drawable.atm;
-                    }
-                    else if(type.equals("Bank")){
-                        icon = R.drawable.bank;
-                    }
-                    else if(type.equals("Parking")){
-                        icon = R.drawable.parking;
-                    }
-                    else if(type.equals("Fuel")){
-                        icon = R.drawable.fuel;
-                    }
-                    else if(type.equals("Hospital")){
-                        icon = R.drawable.hospit;
-                    }
-                    else if(type.equals("Hotel")){
-                        icon = R.drawable.hotel;
-                    }
-                    else if(type.equals("Police Station")){
-                        icon = R.drawable.polic;
-                    }
-                    else if(type.equals("Park")){
-                        icon = R.drawable.park;
-                    }
-                    else if(type.equals("Pharmacy")){
-                        icon = R.drawable.pharm;
-                    }
-                    else if(type.equals("Toilet")){
-                        icon = R.drawable.toilett;
-                    }
-                    else if(type.equals("Train")){
-                        icon = R.drawable.train;
-                    }
-                    else if(type.equals("Education")){
-                        icon = R.drawable.university;
-                    }
-                    googleMap.addMarker(new MarkerOptions().position(latLng).
-                            icon(BitmapDescriptorFactory.fromBitmap(
-                                    createCustomMarker(AllPlaces.this,icon,name)))).setTitle(name);
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                   //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 50));
-
-
+                String lat = dataSnapshot.child("latitude").getValue().toString();
+                String lon = dataSnapshot.child("longitude").getValue().toString();
+                String type = dataSnapshot.child("type").getValue().toString();
+                String name = dataSnapshot.child("name").getValue().toString();
+                LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                if(type.equals("Food")){
+                    icon = R.drawable.khana;
                 }
-
-//                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//                    @Override
-//                    public boolean onMarkerClick(Marker marker) {
-//                        marker.hideInfoWindow();
-//
-//                        String serviceId = null;
-//                        serviceId = marker.getTitle();
-//
-//                        Intent i = new Intent(MainActivity.this, ServiceDetail.class);
-//                        i.putExtra("Id", serviceId);
-//                        if (usr != null)
-//                            if (usr.equals("Skip"))
-//                                i.putExtra("user", "Skip");
-//                        startActivity(i);
-//
-//                        return false;
-//                    }
-//                });
+                else if(type.equals("Atm")){
+                    icon = R.drawable.atm;
+                }
+                else if(type.equals("Bank")){
+                    icon = R.drawable.bank;
+                }
+                else if(type.equals("Parking")){
+                    icon = R.drawable.parking;
+                }
+                else if(type.equals("Fuel")){
+                    icon = R.drawable.fuel;
+                }
+                else if(type.equals("Hospital")){
+                    icon = R.drawable.hospit;
+                }
+                else if(type.equals("Hotel")){
+                    icon = R.drawable.hotel;
+                }
+                else if(type.equals("Police Station")){
+                    icon = R.drawable.polic;
+                }
+                else if(type.equals("Park")){
+                    icon = R.drawable.park;
+                }
+                else if(type.equals("Pharmacy")){
+                    icon = R.drawable.pharm;
+                }
+                else if(type.equals("Toilet")){
+                    icon = R.drawable.toilett;
+                }
+                else if(type.equals("Train")){
+                    icon = R.drawable.train;
+                }
+                else if(type.equals("Education")){
+                    icon = R.drawable.university;
+                }
+                googleMap.addMarker(new MarkerOptions().position(latLng).
+                        icon(BitmapDescriptorFactory.fromBitmap(
+                                createCustomMarker(route.this,icon,name)))).setTitle(name);
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
 
             }
 
