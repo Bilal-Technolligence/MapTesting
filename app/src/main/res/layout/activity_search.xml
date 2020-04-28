@@ -26,13 +26,24 @@
                     android:drawableLeft="@drawable/ic_search_black_24dp"/>
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bookmarkList"
+                    android:padding="5dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginBottom="15dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/layout_bg"
+
+                    />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:id="@+id/searchList"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
                     android:layout_marginBottom="15dp"
                     android:background="@android:color/white"
-
                     />
             </LinearLayout>
 

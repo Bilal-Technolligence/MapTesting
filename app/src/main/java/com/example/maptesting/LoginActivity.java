@@ -17,8 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin, btnLogin2, btnSignup;
-    TextView btnRecoverPass;
+    TextView btnRecoverPass ,register;
     EditText email,password;
+    ProgressDialog progressDialog;
+    final FirbaseAuthenticationClass firbaseAuthenticationClass=new FirbaseAuthenticationClass();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,17 @@ public class LoginActivity extends AppCompatActivity {
        // final String arr[] = getResources().getStringArray(R.array.selection);
         password = (EditText) findViewById(R.id.editText2);
         email=(EditText) findViewById(R.id.editText);
-
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setMessage("Logging In..... ");
+        register = findViewById(R.id.textRegister);
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(LoginActivity.this, LoginActivity.class);
+                startActivity(i);
+                finish();
+            }
+        });
         btnLogin2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -45,7 +58,10 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(i);
                     }
                     else
-                        Toast.makeText(getApplicationContext(),"Invalid email or password.",Toast.LENGTH_SHORT).show();
+                    {
+                        progressDialog.show();
+                        firbaseAuthenticationClass.LoginUser(EMAIL,PASSWORD, LoginActivity.this, progressDialog);
+                    }
 
 
                 }

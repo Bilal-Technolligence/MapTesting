@@ -1,5 +1,6 @@
 package com.example.maptesting;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,8 +24,9 @@ import java.util.ArrayList;
 public class search extends AppCompatActivity {
     EditText searchtext;
     ArrayList<Location_Attr> location_attrs;
+    ArrayList<Location_Attr> location_attrs1;
     SearchListAdapter adapter;
-    RecyclerView recyclerView;
+    RecyclerView recyclerView, recyclerView1;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +38,31 @@ public class search extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         initTextListener();
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        recyclerView1 = findViewById(R.id.bookmarkList);
+        location_attrs1 = new ArrayList<Location_Attr>();
+        recyclerView1.setLayoutManager(layoutManager);
+        String userId = "1";//FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        databaseReference.child("BookMark").child(userId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                location_attrs1.clear();
+                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                    Location_Attr p = dataSnapshot1.getValue(Location_Attr.class);
+                    location_attrs1.add(p);
+                }
+                recyclerView1.setAdapter(new BookMarkAdapter(location_attrs1 , getApplicationContext() , search.this  ));
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
     private void initTextListener() {
         location_attrs.clear();

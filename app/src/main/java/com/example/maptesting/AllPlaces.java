@@ -155,7 +155,7 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
                     googleMap.addMarker(new MarkerOptions().position(latLng).
                             icon(BitmapDescriptorFactory.fromBitmap(
                                     createCustomMarker(AllPlaces.this,icon,name)))).setTitle(name);
-                    googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                    //googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
                    //googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 50));
 
 
