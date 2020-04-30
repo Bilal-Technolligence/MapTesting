@@ -149,6 +149,8 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                     final double Latitude = Double.parseDouble(lat);
                     final double Longitude = Double.parseDouble(lon);
                     if(latitude == 0.0){
+                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(route.this);
+
                         Task<Location> task = fusedLocationProviderClient.getLastLocation();
                         task.addOnSuccessListener(new OnSuccessListener<Location>() {
                             @Override
