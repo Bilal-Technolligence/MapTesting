@@ -64,7 +64,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                 getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         supportMapFragment.getMapAsync(route.this);
         location = findViewById(R.id.txtName);
-        distance =findViewById(R.id.txtDistance);
+        distance = findViewById(R.id.txtDistance);
         time = findViewById(R.id.txtTime);
         car = findViewById(R.id.txtCar);
         cycle = findViewById(R.id.txtCycle);
@@ -148,7 +148,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                     final int Radius = 6371;// radius of earth in Km
                     final double Latitude = Double.parseDouble(lat);
                     final double Longitude = Double.parseDouble(lon);
-                    if(latitude == 0.0){
+                    if (latitude == 0.0) {
                         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(route.this);
 
                         Task<Location> task = fusedLocationProviderClient.getLastLocation();
@@ -158,7 +158,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                                 if (location != null) {
                                     currentLocation = location;
                                     //Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                                    latitude= currentLocation.getLatitude();
+                                    latitude = currentLocation.getLatitude();
                                     longitude = currentLocation.getLongitude();
                                 }
                                 double lat2 = latitude;
@@ -186,10 +186,22 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                                     String cy = String.valueOf(((kmInDec / 20)));
                                     String b = String.valueOf(((kmInDec / 40)));
                                     String ca = String.valueOf(((kmInDec / 60)));
-                                    time.setText(w + " h");
-                                    cycle.setText(cy + " h");
-                                    bike.setText(b + " h");
-                                    car.setText(ca + " h");
+                                    if ((kmInDec / 5) > 1)
+                                        time.setText(w + " h");
+                                    else
+                                        time.setText(String.valueOf((kmInDec / 5000)) + " m");
+                                    if ((kmInDec / 20) > 1)
+                                        cycle.setText(cy + " h");
+                                    else
+                                        cycle.setText(String.valueOf((kmInDec / 20000)) + " m");
+                                    if ((kmInDec / 40) > 1)
+                                        bike.setText(b + " h");
+                                    else
+                                        bike.setText(String.valueOf((kmInDec / 40000)) + " m");
+                                    if ((kmInDec / 60) > 1)
+                                        car.setText(ca + " h");
+                                    else
+                                        car.setText(String.valueOf((kmInDec / 60000)) + " m");
                                 } else {
                                     distance.setText(meterInDec + " m");
                                     String w = String.valueOf(((meterInDec / 5000)));
@@ -203,8 +215,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                                 }
                             }
                         });
-                    }
-                    else {
+                    } else {
                         double lat2 = latitude;
                         double lon2 = longitude;
                         // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
@@ -230,10 +241,22 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                             String cy = String.valueOf(((kmInDec / 20)));
                             String b = String.valueOf(((kmInDec / 40)));
                             String ca = String.valueOf(((kmInDec / 60)));
-                            time.setText(w + " h");
-                            cycle.setText(cy + " h");
-                            bike.setText(b + " h");
-                            car.setText(ca + " h");
+                            if ((kmInDec / 5) > 1)
+                                time.setText(w + " h");
+                            else
+                                time.setText(String.valueOf((kmInDec / 5000)) + " m");
+                            if ((kmInDec / 20) > 1)
+                                cycle.setText(cy + " h");
+                            else
+                                cycle.setText(String.valueOf((kmInDec / 20000)) + " m");
+                            if ((kmInDec / 40) > 1)
+                                bike.setText(b + " h");
+                            else
+                                bike.setText(String.valueOf((kmInDec / 40000)) + " m");
+                            if ((kmInDec / 60) > 1)
+                                car.setText(ca + " h");
+                            else
+                                car.setText(String.valueOf((kmInDec / 60000)) + " m");
                         } else {
                             distance.setText(meterInDec + " m");
                             String w = String.valueOf(((meterInDec / 5000)));
