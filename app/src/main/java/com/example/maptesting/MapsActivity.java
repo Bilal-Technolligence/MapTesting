@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -114,6 +115,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
         }
     }
+
+
     private void ShowDialog() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View mView = getLayoutInflater().inflate(R.layout.addlocation, null);
@@ -136,19 +139,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
+                        if (!comment.getText().toString().isEmpty()) {
+                            final String push = FirebaseDatabase.getInstance().getReference().child("Location").push().getKey();
+                            Location_Attr attr = new Location_Attr();
+                            attr.setId(push);
+                            attr.setName(comment.getText().toString().toUpperCase());
+                            attr.setLongitude(String.valueOf(currentLocation.getLongitude()));
+                            attr.setLatitude(String.valueOf(currentLocation.getLatitude()));
+                            attr.setType(service);
 
-                        final String push = FirebaseDatabase.getInstance().getReference().child("Location").push().getKey();
-                        Location_Attr attr = new Location_Attr();
-                        attr.setId(push);
-                        attr.setName(comment.getText().toString().toUpperCase());
-                        attr.setLongitude(String.valueOf(currentLocation.getLongitude()));
-                        attr.setLatitude(String.valueOf(currentLocation.getLatitude()));
-                        attr.setType(service);
-
-                        dref.child("Location").child(comment.getText().toString().toUpperCase())
-                                .setValue(attr);
-                        Toast.makeText(getApplicationContext(), "Location saved.", Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
+                            dref.child("Location").child(comment.getText().toString().toUpperCase())
+                                    .setValue(attr);
+                            Toast.makeText(getApplicationContext(), "Location saved.", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        } else
+                            Toast.makeText(getApplicationContext(), "PLease enter the location", Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {

@@ -9,7 +9,7 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorBlack"
         android:textColorHint="@color/colorBlack"
-        android:hint="Location" />
+        android:hint="Add location here" />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
