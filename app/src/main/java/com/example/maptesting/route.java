@@ -13,6 +13,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +37,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.DecimalFormat;
 
 public class route extends AppCompatActivity implements OnMapReadyCallback {
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
@@ -84,7 +87,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                             attr.setLongitude(lon);
                             attr.setLatitude(lat);
                             attr.setType(type);
-                            dref.child("Bookmark").child(uid).child(name)
+                            dref.child("BookMark").child(uid).child(name)
                                     .setValue(attr);
                             Toast.makeText(getApplicationContext(), "Bookmark saved.", Toast.LENGTH_LONG).show();
                         }
@@ -138,16 +141,52 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                     String type = dataSnapshot.child("type").getValue().toString();
                     String name = dataSnapshot.child("name").getValue().toString();
                     location.setText(name);
-                    String d= String.valueOf(distance(Double.parseDouble(lat),latitude,Double.parseDouble(lon),longitude));
-                    distance.setText(d.substring(0,6)+" km");
-                    String w = String.valueOf((( Double.parseDouble(d.substring(0,6))/5)  ));
-                    String c = String.valueOf(((Double.parseDouble(d.substring(0,6))/20) ));
-                    String b = String.valueOf(((Double.parseDouble(d.substring(0,6))/40) ));
-                    String ca = String.valueOf(((Double.parseDouble(d.substring(0,6))/60) ));
-                    time.setText(w.substring(0,6) +" h");
-                    cycle.setText(c.substring(0,6) +" h");
-                    bike.setText(b.substring(0,6) +" h");
-                    car.setText(ca.substring(0,6) +" h");
+//                    String d= String.valueOf(distance(Double.parseDouble(lat),latitude,Double.parseDouble(lon),longitude));
+                    int Radius = 6371;// radius of earth in Km
+                    double latitude1 =Double.parseDouble(lat);
+                    double longitude1 = Double.parseDouble(lon);
+                    double lat2 = latitude;
+                    double lon2 = longitude;
+                    // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
+
+                    double dLat = Math.toRadians(lat2 - latitude1);
+                    double dLon = Math.toRadians(lon2 - longitude1);
+                    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                            + Math.cos(Math.toRadians(latitude1))
+                            * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                            * Math.sin(dLon / 2);
+                    double c = 2 * Math.asin(Math.sqrt(a));
+                    double valueResult = Radius * c;
+                    double km = valueResult / 1;
+                    DecimalFormat newFormat = new DecimalFormat("####");
+                    int kmInDec = Integer.valueOf(newFormat.format(km));
+                    double meter = valueResult % 1000;
+                    int meterInDec = Integer.valueOf(newFormat.format(meter));
+                    Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                            + " Meter   " + meterInDec);
+                    if(kmInDec!=0) {
+                        distance.setText(kmInDec + " km");
+                        String w = String.valueOf(((kmInDec / 5)));
+                        String cy = String.valueOf(((kmInDec / 20)));
+                        String b = String.valueOf(((kmInDec / 40)));
+                        String ca = String.valueOf(((kmInDec / 60)));
+                        time.setText(w +" h");
+                        cycle.setText(cy+" h");
+                        bike.setText(b+" h");
+                        car.setText(ca +" h");
+                    }
+                    else {
+                        distance.setText(meterInDec + " m");
+                        String w = String.valueOf(((meterInDec / 5000)));
+                        String cy = String.valueOf(((kmInDec / 20000)));
+                        String b = String.valueOf(((kmInDec / 40000)));
+                        String ca = String.valueOf(((kmInDec / 60000)));
+                        time.setText(w +" m");
+                        cycle.setText(cy+" m");
+                        bike.setText(b+" m");
+                        car.setText(ca +" m");
+                    }
+
                     LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
                     if (type.equals("Food")) {
                         icon = R.drawable.khana;
@@ -211,34 +250,5 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
         marker.draw(canvas);
 
         return bitmap;
-    }
-    public static double distance(double lat1,
-                                  double lat2, double lon1,
-                                  double lon2)
-    {
-
-        // The math module contains a function
-        // named toRadians which converts from
-        // degrees to radians.
-        lon1 = Math.toRadians(lon1);
-        lon2 = Math.toRadians(lon2);
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-
-        // Haversine formula
-        double dlon = lon2 - lon1;
-        double dlat = lat2 - lat1;
-        double a = Math.pow(Math.sin(dlat / 2), 2)
-                + Math.cos(lat1) * Math.cos(lat2)
-                * Math.pow(Math.sin(dlon / 2),2);
-
-        double c = 2 * Math.asin(Math.sqrt(a));
-
-        // Radius of earth in kilometers. Use 3956
-        // for miles
-        double r = 6371;
-
-        // calculate the result
-        return (c * r);
     }
 }

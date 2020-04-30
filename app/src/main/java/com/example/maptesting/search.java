@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,17 +44,20 @@ public class search extends AppCompatActivity {
         recyclerView1 = findViewById(R.id.bookmarkList);
         location_attrs1 = new ArrayList<Location_Attr>();
         recyclerView1.setLayoutManager(layoutManager);
-        String userId = "1";//FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
         databaseReference.child("BookMark").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                location_attrs1.clear();
-                for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
-                    Location_Attr p = dataSnapshot1.getValue(Location_Attr.class);
-                    location_attrs1.add(p);
+                if(dataSnapshot.exists()) {
+                    location_attrs1.clear();
+                    for (DataSnapshot dataSnapshot1 : dataSnapshot.getChildren()) {
+                        Location_Attr p = dataSnapshot1.getValue(Location_Attr.class);
+                        location_attrs1.add(p);
+                    }
+                    recyclerView1.setAdapter(new BookMarkAdapter(location_attrs1, getApplicationContext(), search.this));
                 }
-                recyclerView1.setAdapter(new BookMarkAdapter(location_attrs1 , getApplicationContext() , search.this  ));
-
+                else
+                    recyclerView1.setVisibility(View.GONE);
 
             }
 

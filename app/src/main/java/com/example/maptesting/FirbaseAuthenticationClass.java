@@ -43,7 +43,7 @@ public class FirbaseAuthenticationClass extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                        activity.startActivity(new Intent(activity, MainActivity.class));
+                                        activity.startActivity(new Intent(activity, AllPlaces.class));
                                         activity.finish();
                                         progressDialog.dismiss();
 
