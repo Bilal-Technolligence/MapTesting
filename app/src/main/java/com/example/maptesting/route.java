@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,6 +51,8 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
     String id;
     TextView location, distance, time, car, bike, cycle;
     ImageView book;
+    Location currentLocation;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,51 +145,105 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                     String name = dataSnapshot.child("name").getValue().toString();
                     location.setText(name);
 //                    String d= String.valueOf(distance(Double.parseDouble(lat),latitude,Double.parseDouble(lon),longitude));
-                    int Radius = 6371;// radius of earth in Km
-                    double latitude1 =Double.parseDouble(lat);
-                    double longitude1 = Double.parseDouble(lon);
-                    double lat2 = latitude;
-                    double lon2 = longitude;
-                    // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
+                    final int Radius = 6371;// radius of earth in Km
+                    final double Latitude = Double.parseDouble(lat);
+                    final double Longitude = Double.parseDouble(lon);
+                    if(latitude == 0.0){
+                        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+                        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                            @Override
+                            public void onSuccess(Location location) {
+                                if (location != null) {
+                                    currentLocation = location;
+                                    //Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+                                    latitude= currentLocation.getLatitude();
+                                    longitude = currentLocation.getLongitude();
+                                }
+                                double lat2 = latitude;
+                                double lon2 = longitude;
+                                // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
 
-                    double dLat = Math.toRadians(lat2 - latitude1);
-                    double dLon = Math.toRadians(lon2 - longitude1);
-                    double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                            + Math.cos(Math.toRadians(latitude1))
-                            * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                            * Math.sin(dLon / 2);
-                    double c = 2 * Math.asin(Math.sqrt(a));
-                    double valueResult = Radius * c;
-                    double km = valueResult / 1;
-                    DecimalFormat newFormat = new DecimalFormat("####");
-                    int kmInDec = Integer.valueOf(newFormat.format(km));
-                    double meter = valueResult % 1000;
-                    int meterInDec = Integer.valueOf(newFormat.format(meter));
-                    Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
-                            + " Meter   " + meterInDec);
-                    if(kmInDec!=0) {
-                        distance.setText(kmInDec + " km");
-                        String w = String.valueOf(((kmInDec / 5)));
-                        String cy = String.valueOf(((kmInDec / 20)));
-                        String b = String.valueOf(((kmInDec / 40)));
-                        String ca = String.valueOf(((kmInDec / 60)));
-                        time.setText(w +" h");
-                        cycle.setText(cy+" h");
-                        bike.setText(b+" h");
-                        car.setText(ca +" h");
+                                double dLat = Math.toRadians(lat2 - Latitude);
+                                double dLon = Math.toRadians(lon2 - Longitude);
+                                double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                                        + Math.cos(Math.toRadians(Latitude))
+                                        * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                                        * Math.sin(dLon / 2);
+                                double c = 2 * Math.asin(Math.sqrt(a));
+                                double valueResult = Radius * c;
+                                double km = valueResult / 1;
+                                DecimalFormat newFormat = new DecimalFormat("####");
+                                int kmInDec = Integer.valueOf(newFormat.format(km));
+                                double meter = valueResult % 1000;
+                                int meterInDec = Integer.valueOf(newFormat.format(meter));
+                                Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                                        + " Meter   " + meterInDec);
+                                if (kmInDec != 0) {
+                                    distance.setText(kmInDec + " km");
+                                    String w = String.valueOf(((kmInDec / 5)));
+                                    String cy = String.valueOf(((kmInDec / 20)));
+                                    String b = String.valueOf(((kmInDec / 40)));
+                                    String ca = String.valueOf(((kmInDec / 60)));
+                                    time.setText(w + " h");
+                                    cycle.setText(cy + " h");
+                                    bike.setText(b + " h");
+                                    car.setText(ca + " h");
+                                } else {
+                                    distance.setText(meterInDec + " m");
+                                    String w = String.valueOf(((meterInDec / 5000)));
+                                    String cy = String.valueOf(((kmInDec / 20000)));
+                                    String b = String.valueOf(((kmInDec / 40000)));
+                                    String ca = String.valueOf(((kmInDec / 60000)));
+                                    time.setText(w + " m");
+                                    cycle.setText(cy + " m");
+                                    bike.setText(b + " m");
+                                    car.setText(ca + " m");
+                                }
+                            }
+                        });
                     }
                     else {
-                        distance.setText(meterInDec + " m");
-                        String w = String.valueOf(((meterInDec / 5000)));
-                        String cy = String.valueOf(((kmInDec / 20000)));
-                        String b = String.valueOf(((kmInDec / 40000)));
-                        String ca = String.valueOf(((kmInDec / 60000)));
-                        time.setText(w +" m");
-                        cycle.setText(cy+" m");
-                        bike.setText(b+" m");
-                        car.setText(ca +" m");
-                    }
+                        double lat2 = latitude;
+                        double lon2 = longitude;
+                        // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
 
+                        double dLat = Math.toRadians(lat2 - Latitude);
+                        double dLon = Math.toRadians(lon2 - Longitude);
+                        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                                + Math.cos(Math.toRadians(Latitude))
+                                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                                * Math.sin(dLon / 2);
+                        double c = 2 * Math.asin(Math.sqrt(a));
+                        double valueResult = Radius * c;
+                        double km = valueResult / 1;
+                        DecimalFormat newFormat = new DecimalFormat("####");
+                        int kmInDec = Integer.valueOf(newFormat.format(km));
+                        double meter = valueResult % 1000;
+                        int meterInDec = Integer.valueOf(newFormat.format(meter));
+                        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                                + " Meter   " + meterInDec);
+                        if (kmInDec != 0) {
+                            distance.setText(kmInDec + " km");
+                            String w = String.valueOf(((kmInDec / 5)));
+                            String cy = String.valueOf(((kmInDec / 20)));
+                            String b = String.valueOf(((kmInDec / 40)));
+                            String ca = String.valueOf(((kmInDec / 60)));
+                            time.setText(w + " h");
+                            cycle.setText(cy + " h");
+                            bike.setText(b + " h");
+                            car.setText(ca + " h");
+                        } else {
+                            distance.setText(meterInDec + " m");
+                            String w = String.valueOf(((meterInDec / 5000)));
+                            String cy = String.valueOf(((kmInDec / 20000)));
+                            String b = String.valueOf(((kmInDec / 40000)));
+                            String ca = String.valueOf(((kmInDec / 60000)));
+                            time.setText(w + " m");
+                            cycle.setText(cy + " m");
+                            bike.setText(b + " m");
+                            car.setText(ca + " m");
+                        }
+                    }
                     LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
                     if (type.equals("Food")) {
                         icon = R.drawable.khana;
@@ -250,5 +307,12 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
         marker.draw(canvas);
 
         return bitmap;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(route.this, search.class));
+        finish();
     }
 }
