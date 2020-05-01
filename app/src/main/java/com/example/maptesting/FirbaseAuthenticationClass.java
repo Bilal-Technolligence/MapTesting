@@ -42,7 +42,7 @@ public class FirbaseAuthenticationClass extends AppCompatActivity {
                             reference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
+                                    Save.save(activity,"session","true");
                                         activity.startActivity(new Intent(activity, AllPlaces.class));
                                         activity.finish();
                                         progressDialog.dismiss();

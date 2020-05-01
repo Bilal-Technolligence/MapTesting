@@ -215,12 +215,13 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+       // super.onBackPressed();
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AllPlaces.this);
         alertDialogBuilder.setMessage("Are you sure you want to logout?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-
-                startActivity(new Intent(AllPlaces.this, LoginActivity.class));
+                FirebaseAuth.getInstance().signOut();
+                Save.save(getApplicationContext(),"session","false");
+                startActivity(new Intent(AllPlaces.this,LoginActivity.class));
                 finish();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {

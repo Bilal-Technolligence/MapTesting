@@ -12,7 +12,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 public class SplashScreenActivity extends AppCompatActivity {
-
+    Boolean session;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +32,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             public void run() {
                 try {
                     sleep( 5000 );
+                    SESSION();
+
 
 //                    SharedPreferences prefs = getSharedPreferences("Log", MODE_PRIVATE);
 //                    boolean isLoggedIn = prefs.getBoolean("isLoggedIn", false);
@@ -52,9 +54,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 //                        startActivity( intent );
 //                        finish();
 //                    }
-                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class );
-                    startActivity( intent );
-                    finish();
+
                     super.run();
 
                 } catch (InterruptedException e) {
@@ -65,4 +65,25 @@ public class SplashScreenActivity extends AppCompatActivity {
         };
         timer.start();
     }
+    public void SESSION(){
+        //default value false
+        session = Boolean.valueOf(Save.read(getApplicationContext(),"session","false"));
+        if (!session){
+            //when user first or logout
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class );
+            startActivity( intent );
+            finish();
+
+
+        }
+        else{
+            //when user loged in
+            //here value true
+            //how the value can change true
+            Intent intent = new Intent(getApplicationContext(), AllPlaces.class );
+            startActivity( intent );
+            finish();
+        }
+    }
+
 }
