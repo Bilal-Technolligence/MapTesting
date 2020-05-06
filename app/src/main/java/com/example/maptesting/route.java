@@ -41,7 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 
-public class route extends AppCompatActivity implements OnMapReadyCallback {
+public class route extends BaseClass implements OnMapReadyCallback {
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
     LocationManager locationManager;
     String lati, loni;
@@ -64,35 +64,70 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                 getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         supportMapFragment.getMapAsync(route.this);
         location = findViewById(R.id.txtName);
-        distance =findViewById(R.id.txtDistance);
+        distance = findViewById(R.id.txtDistance);
         time = findViewById(R.id.txtTime);
         car = findViewById(R.id.txtCar);
         cycle = findViewById(R.id.txtCycle);
         bike = findViewById(R.id.txtBike);
         book = findViewById(R.id.imgBookMark);
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
+        dref.child("BookMark").child(uid).child(id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    book.setImageResource(R.drawable.bookmark);
+                }
+                else
+                    book.setImageResource(R.drawable.addbook);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         book.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid().toString();
-                dref.child("Location").child(id).addValueEventListener(new ValueEventListener() {
+
+                dref.child("BookMark").child(uid).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            String lat = dataSnapshot.child("latitude").getValue().toString();
-                            String lon = dataSnapshot.child("longitude").getValue().toString();
-                            String type = dataSnapshot.child("type").getValue().toString();
-                            String name = dataSnapshot.child("name").getValue().toString();
-                            String id = dataSnapshot.child("id").getValue().toString();
+                        if(!dataSnapshot.exists()) {
+                            dref.child("Location").child(id).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if (dataSnapshot.exists()) {
+                                        String lat = dataSnapshot.child("latitude").getValue().toString();
+                                        String lon = dataSnapshot.child("longitude").getValue().toString();
+                                        String type = dataSnapshot.child("type").getValue().toString();
+                                        String name = dataSnapshot.child("name").getValue().toString();
+                                        String id = dataSnapshot.child("id").getValue().toString();
 
-                            Location_Attr attr = new Location_Attr();
-                            attr.setId(id);
-                            attr.setName(name);
-                            attr.setLongitude(lon);
-                            attr.setLatitude(lat);
-                            attr.setType(type);
-                            dref.child("BookMark").child(uid).child(name)
-                                    .setValue(attr);
-                            Toast.makeText(getApplicationContext(), "Bookmark saved.", Toast.LENGTH_LONG).show();
+                                        Location_Attr attr = new Location_Attr();
+                                        attr.setId(id);
+                                        attr.setName(name);
+                                        attr.setLongitude(lon);
+                                        attr.setLatitude(lat);
+                                        attr.setType(type);
+                                        dref.child("BookMark").child(uid).child(name)
+                                                .setValue(attr);
+                                        Toast.makeText(getApplicationContext(), "Bookmark saved.", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
+                        }
+                        else{
+                            dref.child("BookMark").child(uid).child(id)
+                                    .setValue(null);
+                            Toast.makeText(getApplicationContext(), "Bookmark removed.", Toast.LENGTH_LONG).show();
+
                         }
                     }
 
@@ -101,8 +136,19 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
 
                     }
                 });
+
             }
         });
+    }
+
+    @Override
+    int getContentViewId() {
+        return R.layout.activity_route;
+    }
+
+    @Override
+    int getNavigationMenuItemId() {
+        return R.id.bookmarks;
     }
 
     @Override
@@ -148,7 +194,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                     final int Radius = 6371;// radius of earth in Km
                     final double Latitude = Double.parseDouble(lat);
                     final double Longitude = Double.parseDouble(lon);
-                    if(latitude == 0.0){
+                    if (latitude == 0.0) {
                         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(route.this);
 
                         Task<Location> task = fusedLocationProviderClient.getLastLocation();
@@ -158,7 +204,7 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                                 if (location != null) {
                                     currentLocation = location;
                                     //Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                                    latitude= currentLocation.getLatitude();
+                                    latitude = currentLocation.getLatitude();
                                     longitude = currentLocation.getLongitude();
                                 }
                                 double lat2 = latitude;
@@ -186,25 +232,44 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                                     String cy = String.valueOf(((kmInDec / 20)));
                                     String b = String.valueOf(((kmInDec / 40)));
                                     String ca = String.valueOf(((kmInDec / 60)));
-                                    time.setText(w + " h");
-                                    cycle.setText(cy + " h");
-                                    bike.setText(b + " h");
-                                    car.setText(ca + " h");
+                                    if ((kmInDec / 5) >= 1) {
+                                        int d = ((kmInDec % 5));
+                                        time.setText(w + " h " + String.valueOf(d) + " m");
+                                    } else
+                                        time.setText(String.valueOf((kmInDec / 5000)) + " m");
+                                    if ((kmInDec / 20) >= 1) {
+                                        int d = ((kmInDec % 20));
+                                        cycle.setText(cy + " h " + String.valueOf(d) + " m");
+                                    } else
+                                        cycle.setText(String.valueOf((kmInDec / 20000)) + " m");
+                                    if ((kmInDec / 40) >= 1) {
+                                        int d = ((kmInDec % 40));
+                                        bike.setText(b + " h " + String.valueOf(d) + " m");
+                                    } else {
+                                        int d = ((kmInDec % 40));
+                                        bike.setText(String.valueOf(d) + " m");
+                                    }
+                                    if ((kmInDec / 60) >= 1) {
+                                        int d = ((kmInDec % 60));
+                                        car.setText(ca + " h " + String.valueOf(d) + " m");
+                                    } else {
+                                        int d = ((kmInDec % 60));
+                                        car.setText(String.valueOf(d) + " m");
+                                    }
                                 } else {
                                     distance.setText(meterInDec + " m");
-                                    String w = String.valueOf(((meterInDec / 5000)));
-                                    String cy = String.valueOf(((kmInDec / 20000)));
-                                    String b = String.valueOf(((kmInDec / 40000)));
-                                    String ca = String.valueOf(((kmInDec / 60000)));
-                                    time.setText(w + " m");
-                                    cycle.setText(cy + " m");
-                                    bike.setText(b + " m");
-                                    car.setText(ca + " m");
+                                    Double w = Double.valueOf(((meterInDec / 1.38889)));
+                                    Double cy = Double.valueOf(((meterInDec / 5.55556)));
+                                    Double b = Double.valueOf(((meterInDec / 11.1111)));
+                                    Double ca = Double.valueOf(((meterInDec / 16.6667)));
+                                    time.setText(String.valueOf(w) + " m");
+                                    cycle.setText(String.valueOf(cy) + " m");
+                                    bike.setText(String.valueOf(b) + " m");
+                                    car.setText(String.valueOf(ca) + " m");
                                 }
                             }
                         });
-                    }
-                    else {
+                    } else {
                         double lat2 = latitude;
                         double lon2 = longitude;
                         // googleMap.addMarker(new MarkerOptions().position(new LatLng(lat2, lon2)).title("Destination"));//.icon(BitmapDescriptorFactory.fromResource(R.drawable.dp)));
@@ -230,20 +295,40 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
                             String cy = String.valueOf(((kmInDec / 20)));
                             String b = String.valueOf(((kmInDec / 40)));
                             String ca = String.valueOf(((kmInDec / 60)));
-                            time.setText(w + " h");
-                            cycle.setText(cy + " h");
-                            bike.setText(b + " h");
-                            car.setText(ca + " h");
+                            if ((kmInDec / 5) >= 1) {
+                                int d = ((kmInDec % 5));
+                                time.setText(w + " h " + String.valueOf(d) + " m");
+                            } else
+                                time.setText(String.valueOf((kmInDec / 5000)) + " m");
+                            if ((kmInDec / 20) >= 1) {
+                                int d = ((kmInDec % 20));
+                                cycle.setText(cy + " h " + String.valueOf(d) + " m");
+                            } else
+                                cycle.setText(String.valueOf((kmInDec / 20000)) + " m");
+                            if ((kmInDec / 40) >= 1) {
+                                int d = ((kmInDec % 40));
+                                bike.setText(b + " h " + String.valueOf(d) + " m");
+                            } else {
+                                int d = ((kmInDec % 40));
+                                bike.setText(String.valueOf(d) + " m");
+                            }
+                            if ((kmInDec / 60) >= 1) {
+                                int d = ((kmInDec % 60));
+                                car.setText(ca + " h " + String.valueOf(d) + " m");
+                            } else {
+                                int d = ((kmInDec % 60));
+                                car.setText(String.valueOf(d) + " m");
+                            }
                         } else {
                             distance.setText(meterInDec + " m");
-                            String w = String.valueOf(((meterInDec / 5000)));
-                            String cy = String.valueOf(((kmInDec / 20000)));
-                            String b = String.valueOf(((kmInDec / 40000)));
-                            String ca = String.valueOf(((kmInDec / 60000)));
-                            time.setText(w + " m");
-                            cycle.setText(cy + " m");
-                            bike.setText(b + " m");
-                            car.setText(ca + " m");
+                            Double w = Double.valueOf(((meterInDec / 1.38889)));
+                            Double cy = Double.valueOf(((meterInDec / 5.55556)));
+                            Double b = Double.valueOf(((meterInDec / 11.1111)));
+                            Double ca = Double.valueOf(((meterInDec / 16.6667)));
+                            time.setText(String.valueOf(w) + " m");
+                            cycle.setText(String.valueOf(cy) + " m");
+                            bike.setText(String.valueOf(b) + " m");
+                            car.setText(String.valueOf(ca) + " m");
                         }
                     }
                     LatLng latLng = new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));

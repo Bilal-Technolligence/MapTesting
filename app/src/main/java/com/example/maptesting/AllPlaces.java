@@ -51,7 +51,7 @@ import java.time.LocalDate;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
+public class AllPlaces extends BaseClass implements OnMapReadyCallback{
 
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
     int icon;
@@ -63,7 +63,7 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_places);
+//        setContentView(R.layout.activity_all_places);
         SupportMapFragment supportMapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         supportMapFragment.getMapAsync(AllPlaces.this);
@@ -75,6 +75,16 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    int getContentViewId() {
+        return R.layout.activity_all_places;
+    }
+
+    @Override
+    int getNavigationMenuItemId() {
+        return R.id.backhome;
     }
 
     @Override
@@ -215,13 +225,13 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
+       // super.onBackPressed();
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AllPlaces.this);
         alertDialogBuilder.setMessage("Are you sure you want to logout?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
-
-                startActivity(new Intent(AllPlaces.this, LoginActivity.class));
+                FirebaseAuth.getInstance().signOut();
+                Save.save(getApplicationContext(),"session","false");
+                startActivity(new Intent(AllPlaces.this,LoginActivity.class));
                 finish();
             }
         }).setNegativeButton("No", new DialogInterface.OnClickListener() {

@@ -103,6 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
                             reference.child(uid).child("name").setValue(Name.toUpperCase());
                             reference.child(uid).child("email").setValue(Email);
                             reference.child(uid).child("id").setValue(uid);
+                            Save.save(getApplicationContext(),"session","true");
 
                             Intent intent = new Intent(RegisterActivity.this, AllPlaces.class);
                             startActivity(intent);
