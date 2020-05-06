@@ -55,9 +55,9 @@ public abstract class BaseClass extends AppCompatActivity implements NavigationV
       //  imageView = (ImageView) headerview.findViewById(R.id.profile_image);
         name=(TextView) headerview.findViewById(R.id.userName);
 
-        // FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
+      //   FirebaseUser currentUser= FirebaseAuth.getInstance().getCurrentUser();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        //  final String uid=userName;
+       //   final String uid=userName;
 
         databaseReference.child( "Users" ).child(userId).addValueEventListener( new ValueEventListener() {
             @Override
@@ -106,14 +106,6 @@ public abstract class BaseClass extends AppCompatActivity implements NavigationV
             Intent intent=new Intent(this, search.class);
             startActivity(intent);
             finish();
-        } else if (itemId == R.id.savedlocations) {
-            Intent intent=new Intent(this, MapsActivity.class);
-            startActivity(intent);
-            finish();
-        }
-        else if (itemId == R.id.favourite) {
-            startActivity(new Intent(this , AllPlaces.class));
-            finish();
         }
 
 
@@ -124,6 +116,8 @@ public abstract class BaseClass extends AppCompatActivity implements NavigationV
 //            editor.remove("cat");
 //            editor.commit();
             FirebaseAuth.getInstance().signOut();
+            Save.save(getApplicationContext(),"session","false");
+
             Intent intent = new Intent(BaseClass.this , LoginActivity.class);
             startActivity(intent);
             finish();

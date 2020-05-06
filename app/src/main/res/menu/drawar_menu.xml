@@ -9,14 +9,7 @@
         android:id="@+id/bookmarks"
         android:icon="@drawable/ic_bookmark_black_24dp"
         android:title="Bookmark" />
-    <item
-        android:id="@+id/savedlocations"
-        android:icon="@drawable/saved"
-        android:title="Saved Locations" />
-    <item
-        android:id="@+id/favourite"
-        android:icon="@drawable/favourite"
-        android:title="Favourite" />
+
     <item
         android:id="@+id/logout"
         android:icon="@drawable/logout"

@@ -41,7 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 
-public class route extends AppCompatActivity implements OnMapReadyCallback {
+public class route extends BaseClass implements OnMapReadyCallback {
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
     LocationManager locationManager;
     String lati, loni;
@@ -139,6 +139,16 @@ public class route extends AppCompatActivity implements OnMapReadyCallback {
 
             }
         });
+    }
+
+    @Override
+    int getContentViewId() {
+        return R.layout.activity_route;
+    }
+
+    @Override
+    int getNavigationMenuItemId() {
+        return R.id.bookmarks;
     }
 
     @Override
