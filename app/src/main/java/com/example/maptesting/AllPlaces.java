@@ -51,7 +51,7 @@ import java.time.LocalDate;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
+public class AllPlaces extends BaseClass implements OnMapReadyCallback{
 
     DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
     int icon;
@@ -63,7 +63,7 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_all_places);
+//        setContentView(R.layout.activity_all_places);
         SupportMapFragment supportMapFragment = (SupportMapFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fragmentMap);
         supportMapFragment.getMapAsync(AllPlaces.this);
@@ -75,6 +75,16 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    int getContentViewId() {
+        return R.layout.activity_all_places;
+    }
+
+    @Override
+    int getNavigationMenuItemId() {
+        return R.id.backhome;
     }
 
     @Override
