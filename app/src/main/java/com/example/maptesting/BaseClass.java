@@ -105,7 +105,7 @@ public abstract class BaseClass extends AppCompatActivity implements NavigationV
         } else if (itemId == R.id.bookmarks) {
             Intent intent=new Intent(this, search.class);
             startActivity(intent);
-            finish();
+            //finish();
         }
 
 
