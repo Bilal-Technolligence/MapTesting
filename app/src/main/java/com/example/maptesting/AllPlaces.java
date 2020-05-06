@@ -216,6 +216,7 @@ public class AllPlaces extends AppCompatActivity implements OnMapReadyCallback{
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AllPlaces.this);
         alertDialogBuilder.setMessage("Are you sure you want to logout?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
